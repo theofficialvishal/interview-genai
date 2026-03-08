@@ -106,4 +106,30 @@ const logoutController = async (req, res) => {
     }
 };
 
-module.exports = {registerController, loginController, logoutController};
+/**
+ * @name getMeController
+ * @description Get the current logged in user details
+ * @route GET /api/auth/get-me
+ * @access Private
+ */
+
+const getMeController = async (req, res) => {
+    try {
+        const user = await userModel.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ success: false, error: "User not found" });
+        }
+        res.status(200).json({
+            success: true,
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+module.exports = {registerController, loginController, logoutController, getMeController};
